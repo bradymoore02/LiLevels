@@ -3,9 +3,9 @@ import numpy as np
 import csv
 
 
-video_name = 'VideoSnippets/leveltest2.mp4'
+input_video_name = 'VideoSnippets/leveltest2.mp4'
 csv_name = 'OutputCSVs/1-1-30A--.csv'
-important_info = 'g'
+important_info = '' # This is added at the top of the csv file
 # List to store selected points
 selected_points = []
 
@@ -28,7 +28,7 @@ def select_points(event, x, y, flags, param):
 # Draw a small cross at the clicked coordinates
 
 # Read the video file
-cap = cv2.VideoCapture(video_name)
+cap = cv2.VideoCapture(input_video_name)
 cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
 ret, frame = cap.read()
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
