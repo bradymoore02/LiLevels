@@ -20,3 +20,24 @@ UpsiesDownses2.mp4:
 5:31 - 5:35: 30A -> 0A; Down2-7.mp4
 6:00 - 6:06: 0A -> 40A; Up2-8.mp4
 6:16 - 6:19: 40A -> 30A; Down2-9.mp4
+
+
+PunchMouth_III.mp4
+0A -> 50A
+PunchMouth_IV.mp4
+30A -> 50A???
+PunchMouth_V.mp4
+30A -> 50A
+PunchMouth_VI.mp4
+30A -> 50A
+PunchMouth_VII.mp4
+30A -> 50A
+PunchMouth_VIII.mp4
+30A -> 70A
+
+PunchMouth-Set2-1.mp4
+30A -> 50A
+PunchMouth-Set2-2.mp4
+30A -> 60A
+PunchMouth-Set2-3.mp4
+30A -> 50A 800 gauss

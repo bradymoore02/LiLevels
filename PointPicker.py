@@ -1,19 +1,35 @@
 import cv2
 import numpy as np
 import csv
+import ast
 
+input_video_name = 'VideoSnippets/PunchMouth/PunchMouth_IIICropped.mp4'
+csv_name = 'OutputCSVs/PunchMouth_IIICropped.csv'
 
-input_video_name = 'VideoSnippets/leveltest2.mp4'
-csv_name = 'OutputCSVs/1-1-30A--.csv'
 important_info = '' # This is added at the top of the csv file
 # List to store selected points
 selected_points = []
+output_dict = {0: [],}
+
+try:
+    with open(csv_name, 'r') as file:
+        csv_reader = csv.reader(file)
+        old_csv = [line for line in csv_reader]
+        for line in old_csv[1:]:
+            try:
+                output_dict[int(line[0])] = [ast.literal_eval(point) for point in line[1:]]
+            except:
+                output_dict[int(line[0])] = []
+except:
+    with open(csv_name, 'a') as file:
+        csv_writer = csv.writer(file,)
+        csv_writer.writerow(["frame", important_info])
+        print("frame appended")
 
 # Variables for frame navigation and click counter
 current_frame = 0
 click_counter = 0
 
-output_dict = {0: [],}
 # Mouse callback function
 def select_points(event, x, y, flags, param):
     global click_counter
@@ -23,7 +39,7 @@ def select_points(event, x, y, flags, param):
         selected_points.append((x, y))
         click_counter += 1
         output_dict[current_frame].append((x,y))
-        print(f"Selected Point {click_counter}: ({x}, {y})")
+        print(f"Frame: {current_frame} Selected Point {click_counter}: ({x}, {y})")
 
 # Draw a small cross at the clicked coordinates
 
@@ -52,17 +68,30 @@ while True:
         break
     elif key == ord(' '):  # Spacebar to advance to the next frame
         old_csv = []
-        with open(csv_name, 'r') as file:
-            # Create a CSV reader
-            csv_reader = csv.reader(file)
-            old_csv = [row for row in csv_reader]
-            old_csv[current_frame+1] = [current_frame]
-            for point in output_dict[current_frame]:
-                old_csv[current_frame+1].append(point)
-        with open(csv_name, 'w') as file:
-            csv_writer = csv.writer(file)
-            csv_writer.writerows(old_csv)
-                    
+        try:
+            with open(csv_name, 'r') as file:
+                # Create a CSV reader
+                csv_reader = csv.reader(file)
+                old_csv = [row for row in csv_reader]
+                try:
+                    old_csv[current_frame+1] = [current_frame]
+                except:
+                    old_csv.append([current_frame])
+                for point in output_dict[current_frame]:
+                    old_csv[current_frame+1].append(point)
+
+            with open(csv_name, 'w') as file:
+                csv_writer = csv.writer(file)
+                csv_writer.writerows(old_csv)
+        
+        except IndexError:
+            with open(csv_name, 'a') as file:
+                csv_writer = csv.writer(file)
+                print(current_frame)
+                row = [current_frame]
+                for point in output_dict[current_frame]:
+                    row.append(point)
+                csv_writer.writerow(row)
                     
                     
         if current_frame < total_frames:
@@ -76,17 +105,25 @@ while True:
         updatenow = True
     elif key == ord('b'):  # 'B' to go back to the previous frame
         old_csv = []
-        with open(csv_name, 'r') as file:
-            # Create a CSV reader
-            csv_reader = csv.reader(file)
-            old_csv = [row for row in csv_reader]
-            old_csv[current_frame+1] = [current_frame]
-            for point in output_dict[current_frame]:
-                old_csv[current_frame+1].append(point)
-        with open(csv_name, 'w') as file:
-            csv_writer = csv.writer(file)
-            csv_writer.writerows(old_csv)
-        
+        try:
+            with open(csv_name, 'r') as file:
+                # Create a CSV reader
+                csv_reader = csv.reader(file)
+                old_csv = [row for row in csv_reader]
+                old_csv[current_frame+1] = [current_frame]
+                for point in output_dict[current_frame]:
+                    old_csv[current_frame+1].append(point)
+            with open(csv_name, 'w') as file:
+                csv_writer = csv.writer(file)
+                csv_writer.writerows(old_csv)
+        except:
+            with open(csv_name, 'a') as file:
+                csv_writer = csv.writer(file)
+                print(current_frame)
+                row = [current_frame]
+                for point in output_dict[current_frame]:
+                    row.append(point)
+                csv_writer.writerow(row)   
         
         
         if current_frame > 0:
@@ -96,9 +133,13 @@ while True:
     elif key == ord('x'):  # 'x' to exit the video window
         break
     elif key == ord('u'):
-        output_dict[current_frame].pop()
-        click_counter = click_counter-1
-        updatenow = True
+        try:
+            output_dict[current_frame].pop()
+            click_counter = click_counter-1
+            updatenow = True
+        except IndexError:
+            print("No points to undo on this frame")
+            pass
 
 
     if updatenow:
@@ -118,15 +159,5 @@ while True:
 # Release the video capture object and close windows
 cap.release()
 cv2.destroyAllWindows()
-with open(csv_name, 'a', newline='') as csvfile:
-    csv_writer = csv.writer(csvfile)
-    csv_writer.writerow(['Frame', important_info])  # Write header
-    for key in output_dict.keys():
-        row = [key]
-        for point in output_dict[key]:
-            row.append(point)
-        csv_writer.writerow(row)
 
-# Print the selected points
-print("Selected Points:", output_dict)
-print(f"Selected points saved to {csv_name}")
+
