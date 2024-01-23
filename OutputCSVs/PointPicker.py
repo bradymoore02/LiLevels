@@ -51,20 +51,6 @@ while True:
     if key == ord('q'):
         break
     elif key == ord(' '):  # Spacebar to advance to the next frame
-        old_csv = []
-        with open(csv_name, 'r') as file:
-            # Create a CSV reader
-            csv_reader = csv.reader(file)
-            old_csv = [row for row in csv_reader]
-            old_csv[current_frame+1] = [current_frame]
-            for point in output_dict[current_frame]:
-                old_csv[current_frame+1].append(point)
-        with open(csv_name, 'w') as file:
-            csv_writer = csv.writer(file)
-            csv_writer.writerows(old_csv)
-                    
-                    
-                    
         if current_frame < total_frames:
             current_frame += 1
         try:
@@ -75,20 +61,6 @@ while True:
         click_counter = len(output_dict[current_frame])
         updatenow = True
     elif key == ord('b'):  # 'B' to go back to the previous frame
-        old_csv = []
-        with open(csv_name, 'r') as file:
-            # Create a CSV reader
-            csv_reader = csv.reader(file)
-            old_csv = [row for row in csv_reader]
-            old_csv[current_frame+1] = [current_frame]
-            for point in output_dict[current_frame]:
-                old_csv[current_frame+1].append(point)
-        with open(csv_name, 'w') as file:
-            csv_writer = csv.writer(file)
-            csv_writer.writerows(old_csv)
-        
-        
-        
         if current_frame > 0:
             current_frame -= 1
         click_counter = len(output_dict[current_frame])
@@ -99,6 +71,17 @@ while True:
         output_dict[current_frame].pop()
         click_counter = click_counter-1
         updatenow = True
+    elif key == ord('s'):
+        with open(csv_name, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerow(['Frame', important_info])  # Write header
+            for key in output_dict.keys():
+                row = [key]
+                for point in output_dict[key]:
+                    row.append(point)
+                csv_writer.writerow(row)
+
+
 
 
     if updatenow:
@@ -118,7 +101,7 @@ while True:
 # Release the video capture object and close windows
 cap.release()
 cv2.destroyAllWindows()
-with open(csv_name, 'a', newline='') as csvfile:
+with open(csv_name, 'w', newline='') as csvfile:
     csv_writer = csv.writer(csvfile)
     csv_writer.writerow(['Frame', important_info])  # Write header
     for key in output_dict.keys():

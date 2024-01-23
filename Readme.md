@@ -1,10 +1,6 @@
 ### Point Picker for Li Videos on SLiDE
 
-## Getting Started
-
-1. Clone this git repository
-2. Download the cropped videos from box.illinois.edu
-
+Need a folder called OutputCSVs/ to save the output
 ## First Video
 
 1. Edit the input_video_name and csv_name variables at the top of PointPicker.py to indicate the input video you want and where to save the data.
