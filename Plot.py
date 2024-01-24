@@ -6,10 +6,6 @@ import numpy as np
 
 def read_the_csv(filename):
     data = {}
-    minx = 1e5
-    maxx = 0
-    miny = 1e5
-    maxy = 0
     with open(filename, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
         next(csv_reader, None)
@@ -22,20 +18,18 @@ def read_the_csv(filename):
                 y = float(coord.strip('()').split(',')[1])
                 data[frame]['x'].append(x)
                 data[frame]['y'].append(y)
-                if frame > 2:
-                    if x < minx:
-                        minx = x
-                    if x > maxx:
-                        maxx = x
-                    if y < miny:
-                        miny = y
-                    if y > maxy:
-                        maxy = y
-    return data, minx, maxx, miny, maxy
+
+    print(data.keys())
+    x0, y0 = data[3]['x'][0], data[3]['y'][0]
+    
+    for frame in data.keys():
+        data[frame]['x'] = [d-x0 for d in data[frame]['x']]
+        data[frame]['y'] = [d-y0 for d in data[frame]['y']]
+    
+    return data, x0,y0
 
 def correct(xlist,ylist, slope_correction):
     newy = []
-
     for i, x in enumerate(xlist):
         newy.append(ylist[i]-slope_correction*x)
     return np.array(newy)
@@ -43,4 +37,5 @@ def correct(xlist,ylist, slope_correction):
 def scaling(channels, data):
     pixel_len = np.sqrt(data[1]['x'][1]-data[1]['x'][0])**2+(data[1]['y'][1]-data[1]['y'][0])
     real_len = channels*3 # in mm
+    print(real_len/pixel_len)
     return real_len/pixel_len

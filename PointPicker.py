@@ -3,8 +3,10 @@ import numpy as np
 import csv
 import ast
 
-input_video_name = 'VideoSnippets/PunchMouth/PunchMouth_IIICropped.mp4'
-csv_name = 'OutputCSVs/PunchMouth_IIICropped.csv'
+NAME = 'Distributor_Filling_Crop'
+#NAME = 'PunchMouth-Set2-1'
+input_video_name = f'VideoSnippets/{NAME}.mp4'
+csv_name = f'OutputCSVs/{NAME}.csv'
 
 important_info = '' # This is added at the top of the csv file
 # List to store selected points
