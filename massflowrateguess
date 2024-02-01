@@ -1,0 +1,89 @@
+import Plot
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import csv
+import Plot
+from scipy.optimize import curve_fit
+
+rho_Li = 0.534      # [g/cm3]
+
+VIDEO_NAME = "PunchMouth-Set2-1"
+data, x0,y0 = Plot.read_the_csv(f"OutputCSVs/{VIDEO_NAME}.csv")
+
+
+def R0(h, w):
+    return w*h/(w+2*h)
+
+def v_steven(h, w):
+    gamma=0.3973
+    rho = 0.534 #[g/cm]
+    g = 9.81
+    return np.sqrt(8*gamma/rho/w-2*g*h)
+
+def v_steven_2(h, w):
+    g = 9.81
+    return np.sqrt(2*g*h)
+
+def v_steven_3(h,w):
+    g = 9.81
+    return 1/h*np.sqrt(2*g)*2/3*h**(3/2)
+
+data, x0,y0 = Plot.read_the_csv(f"OutputCSVs/{VIDEO_NAME}.csv")
+print(data)
+scale_factor = Plot.scaling(10, data)
+channels = {}
+frames = []
+for channel in range(12):
+    channels[channel] = []
+    for frame in data.keys():
+        if frame > 3:
+            channels[channel].append(-data[frame]['y'][channel]*scale_factor)
+            if channel ==0:
+                frames.append(frame)
+
+
+slope_correction = (data[0]['y'][1]-data[0]['y'][0])/(data[0]['x'][1]-data[0]['x'][0])
+pixelscale = Plot.scaling(10.0, data)
+print()
+w = 2.0 # [mm]
+for frame in data.keys():
+    if frame < 4:
+        continue
+    formatted_frame = f"{frame/60:.{3}f}"
+    with open(f"Compiled_Data/{VIDEO_NAME}/t={formatted_frame}.csv", 'w') as f:
+        csv_writer = csv.writer(f)
+        csv_writer.writerow(["channel", "height [mm]", "v_avg [mm/s]", "mdot [g/s]"])
+        for channel in range(14):
+            real_channel = 18-channel
+            #print("array",np.array(data[frame]['x'][channel]),np.array(data[frame]['y'][channel]))
+            h_channel = -Plot.correct2(data[frame]['x'][channel], data[frame]['y'][channel],slope_correction)*pixelscale+6.2 # [mm]
+            v_avg_channel = v_steven_3(h_channel/1000,w)*1000 # [mm/s]
+            m_dot_channel = v_avg_channel*w*h_channel/1e3*rho_Li # [g/s]
+            csv_writer.writerow([real_channel, h_channel, v_avg_channel, m_dot_channel])
+
+
+    
+    
+    
+"""for channel in channels.keys():
+    x =frames
+    y = np.array(channels[channel])+5
+    x_adjusted = np.array(x)-x[0]
+    y_adjusted = np.array(y)-y[0]
+    
+    plt.figure(1)
+    
+    
+    #plt.plot(x, R0(np.array(y), 1)**(2/3)*20,label=f'Mannings Eq')
+    plt.plot(x, v_steven(-np.array(y)/100, 2/100),label=f'Stevens eq')
+    plt.plot(x, v_steven_2(np.array(y)/100, 2/100),label=f'Stevens eq 2')
+    #plt.plot(x,y, label="h")
+    plt.legend()
+    plt.show()
+    break
+plt.legend() 
+plt.show()
+ """

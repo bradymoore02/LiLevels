@@ -8,11 +8,17 @@ from scipy.optimize import curve_fit
 def poly2(x,a,b):
     return x**2*a+x*b #+c implied
 
+def func23(x,a,b):
+    return a*x**(2/3)+b
+
+def func23d(x,a,b):
+    return 2/3*a*x**(-1/3)
+
 def poly1(x, a, b):
     return x*a*2 + b
 
 #VIDEO_NAME = 'PunchMouth-Set2-1'
-VIDEO_NAME = 'Distributor_Filling_Crop'
+VIDEO_NAME = 'PunchMouth-Set2-3-'
 
 data, x0,y0 = Plot.read_the_csv(f"OutputCSVs/{VIDEO_NAME}.csv")
 print(data)
@@ -47,7 +53,7 @@ for channel in channels.keys():
     
     params, cov = curve_fit(poly2, x_adjusted,y_adjusted)
     
-    
+    params23, cov = curve_fit(func23,x_adjusted,y_adjusted)
     
     plt.figure(0)
     plt.plot(x, y, label=channel)

@@ -2,10 +2,11 @@ import cv2
 import numpy as np
 import csv
 import ast
+import time
 
-NAME = 'Distributor_Filling_Crop'
-#NAME = 'PunchMouth-Set2-1'
-input_video_name = f'VideoSnippets/{NAME}.mp4'
+NAME = 'Up1-3'
+NAME = 'PunchMouth-Set2-1'
+input_video_name = f'VideoSnippets/PunchMouth/{NAME}.mp4'
 csv_name = f'OutputCSVs/{NAME}.csv'
 
 important_info = '' # This is added at the top of the csv file
@@ -48,24 +49,23 @@ def select_points(event, x, y, flags, param):
 # Read the video file
 cap = cv2.VideoCapture(input_video_name)
 cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame)
+cap.set(cv2.CAP_PROP_FPS,60)
+cap.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('a', 'v', 'c', '1'))
 ret, frame = cap.read()
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 # Create a window and set the mouse callback
 cv2.namedWindow('Frame')
 cv2.setMouseCallback('Frame', select_points)
 last_click = 10
+last_key_time = time.time()
 
 while True:
     # Display the frame number in the top right corner
-
-
     if click_counter != last_click:
         updatenow = True
     last_click = click_counter
     # Wait for key press
     key = cv2.waitKey(1) & 0xFF
-
-    # Handle key events
     if key == ord('q'):
         break
     elif key == ord(' '):  # Spacebar to advance to the next frame
@@ -89,7 +89,7 @@ while True:
         except IndexError:
             with open(csv_name, 'a') as file:
                 csv_writer = csv.writer(file)
-                print(current_frame)
+                
                 row = [current_frame]
                 for point in output_dict[current_frame]:
                     row.append(point)
@@ -104,7 +104,10 @@ while True:
             output_dict[current_frame] = []
 
         click_counter = len(output_dict[current_frame])
+        print(current_frame-1)
         updatenow = True
+        
+        
     elif key == ord('b'):  # 'B' to go back to the previous frame
         old_csv = []
         try:
@@ -142,6 +145,9 @@ while True:
         except IndexError:
             print("No points to undo on this frame")
             pass
+        
+    
+
 
 
     if updatenow:

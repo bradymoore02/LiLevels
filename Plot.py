@@ -34,8 +34,15 @@ def correct(xlist,ylist, slope_correction):
         newy.append(ylist[i]-slope_correction*x)
     return np.array(newy)
 
+def correct2(x,y, slope_correction):
+    return y-slope_correction*x
+
+
 def scaling(channels, data):
     pixel_len = np.sqrt(data[1]['x'][1]-data[1]['x'][0])**2+(data[1]['y'][1]-data[1]['y'][0])
     real_len = channels*3 # in mm
     print(real_len/pixel_len)
     return real_len/pixel_len
+
+def scalingy(height, data):
+    return height/(data[1]['y'][0]-data[1]['y'][1])

@@ -7,7 +7,7 @@ import Plot
 
 # Function to generate updated data for the plot based on the frame
 
-VIDEO_NAME = 'PunchMouth-Set2-1'
+VIDEO_NAME = 'PunchMouth-Set2-3-'
 #VIDEO_NAME = 'Distributor_Filling_Crop'
 
 FOLDER = "PunchMouth"
